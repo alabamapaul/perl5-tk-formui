@@ -236,6 +236,28 @@ has error => (
 );
 
 ##****************************************************************************
+##****************************************************************************
+
+=over 2
+
+=item B<validation>
+
+  Optional code reference of function to call to verify the field data
+  is valid.
+  The field object will be passed as the only parameter to the function.
+  The function should return the empty string if there is no error, or
+  provide an error string if the data is not valid.
+
+=back
+
+=cut
+
+##----------------------------------------------------------------------------
+has validation => (
+  is => qq{rw},
+);
+
+##****************************************************************************
 ## Object Methods
 ##****************************************************************************
 
@@ -345,6 +367,51 @@ sub build_widget
   
   ## Set our widget
   $self->_set_widget(undef);
+
+  return;
+}
+
+##****************************************************************************
+##****************************************************************************
+
+=head2 validate()
+
+=over 2
+
+=item B<Description>
+
+Validate the field data
+
+=item B<Parameters>
+
+NONE
+
+=item B<Return>
+
+
+
+=back
+
+=cut
+
+##----------------------------------------------------------------------------
+sub validate
+{
+  my $self = shift;
+  
+  ## Get the validation attribute
+  my $function = $self->validation;
+  
+  ## See if the validation attribute is a code reference
+  if (ref($function) eq qq{CODE})
+  {
+    ## Call the function
+    if (my $error = $function->($self))
+    {
+      ## Set the field's error message
+      $self->error($error);
+    }
+  }
 
   return;
 }

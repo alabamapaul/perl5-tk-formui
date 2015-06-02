@@ -14,7 +14,7 @@ use with Tk
 
 =head1 VERSION
 
-Version 0.9
+Version 1.0
 
 =head1 SYNOPSIS
 
@@ -71,7 +71,7 @@ use JSON;
 use Try::Tiny;
 
 ## Version string
-our $VERSION = qq{0.9};
+our $VERSION = qq{1.0};
 
 Readonly::Scalar our $ENTRY       => qq{Entry};
 Readonly::Scalar our $CHECKBOX    => qq{Checkbox};
@@ -395,6 +395,11 @@ has error_font_color => (
 ## "Private" atributes
 ##***************************************************************************
 
+## Holds reference to variable Tk watches for dialog completion 
+has _watch_variable  => (
+  is      => qq{rw},
+);
+
 ##****************************************************************************
 ## Object Methods
 ##****************************************************************************
@@ -509,6 +514,8 @@ sub add_field ## no critic (RequireArgUnpacking,ProhibitUnusedPrivateSubroutines
 
 Show the form as a child of the given parent, or as a new MainWindow if
 a parent is not specified;
+The function will return if the users cancels the form or submits a 
+form with no errors.
 
 =item B<Parameters>
 
@@ -526,6 +533,64 @@ to the key attributes of the form's fields
 
 ##----------------------------------------------------------------------------
 sub show
+{
+  my $self   = shift;
+  my $parent = shift;
+  my $test   = shift;
+  
+  my $data;
+  my $finished;
+  while (!$finished)
+  {
+    ## Set the current data
+    $self->set_field_data($data) if ($data);
+  
+    ## Show the form
+    $data = $self->show_once($parent, $test);
+    
+    if ($data)
+    {
+      ## Finished only if there are no errors
+      $finished = !$self->has_errors;
+    }
+    else
+    {
+      $finished = 1;
+    }
+  }
+  
+  return($data);
+}
+
+##****************************************************************************
+##****************************************************************************
+
+=head2 show_once($parent)
+
+=over 2
+
+=item B<Description>
+
+Show the form as a child of the given parent, or as a new MainWindow if
+a parent is not specified.
+Once the user submits or cancels the form, the function will return.
+
+=item B<Parameters>
+
+$parent - Parent window, if none is specified, a new MainWindow will be
+created
+
+=item B<Return>
+
+UNDEF when canceled, or a HASH reference containing whose keys correspond 
+to the key attributes of the form's fields
+
+=back
+
+=cut
+
+##----------------------------------------------------------------------------
+sub show_once
 {
   my $self   = shift;
   my $parent = shift;
@@ -551,9 +616,6 @@ sub show
   ## Do not allow user to resize
   $win->resizable(0,0);
 
-  ## The column for the widgets
-  my $widget_col = 1;
-  
   ## Now use the grid geometry manager to layout everything
   my $grid_row = 0;
   
@@ -587,7 +649,7 @@ sub show
           -row        => $grid_row++,
           -rowspan    => 1,
           -column     => 0,
-          -columnspan => $widget_col + 1,
+          -columnspan => 2,
           -sticky     => qq{w},
         );
       }
@@ -620,7 +682,7 @@ sub show
       $widget->grid(
         -row        => $grid_row,
         -rowspan    => 1,
-        -column     => $widget_col,
+        -column     => 1,
         -columnspan => 1,
         -sticky     => qq{w},
       );
@@ -648,86 +710,18 @@ sub show
     -row        => $grid_row++,
     -rowspan    => 1,
     -column     => 0,
-    -columnspan => $widget_col + 1,
+    -columnspan => 2,
     -sticky     => qq{},
   );
   
-  ## See if we have a message
-  if ($self->message)
-  {
-    ## To keep the message from making the dialog box too
-    ## large, we will look at the current window width and
-    ## wrap the message accordingly
-    
-    ## Allow gemoetry manager to calculate all widgets
-    $win->update;
-    
-    ## Determine number of rows and columns in the grid 
-    my ($columns, $rows) = $win->gridSize();
-    
-    ## Use the dialog's minimum width as the starting point
-    my $max_x = $self->min_width;
-    
-    ## Iterate through all rows and columns
-    my $row = 0;
-    while ($row < $rows)
-    {
-      my $col = 0;
-      while ($col < $columns)
-      {
-        ## Get the bounding box of the widget
-        my ($x, $y, $width, $height) = $win->gridBbox($col, $row);
-        ## Get the max x of the widget
-        $x += $width;
-        ## See if this is larger than our current max x
-        $max_x = $x if ($x > $max_x);
-        
-        ## Increment the colums
-        $col++;
-      }
-      ## Increment the rows
-      $row++;
-    }
-    
-    ## Create a label widget
-    $win->Label(
-      -wraplength => $max_x,
-      -text       => $self->message,
-      -justify    => qq{left},
-      -font       => $self->message_font,
-    )
-    ->grid(
-      -row        => 0,
-      -rowspan    => 1,
-      -column     => 0,
-      -columnspan => $widget_col + 1,
-      -sticky     => qq{},
-    );
-    
-    ## Use an empty frame as a spacer 
-    $win->Frame(-height => 5)->grid(-row => 1);
-  }
-    
+  ## Set the form's message
+  $self->_set_message($win);
   
-  ## Now add the "hot key"
-  if ($underline >= 0)
-  {
-    my $keycap = lc(substr($button_text, $underline, 1));
-    
-    $win->bind(qq{<Alt-Key-$keycap>} => sub {$result = 1;});
-  }
+  $self->_watch_variable(\$result);
   
-  ## See if option set
-  if ($self->submit_on_enter)
-  {
-    $win->bind(qq{<Key-Return>} => sub {$result = 1;});
-  }
+  ## Setup any keyboard bindings
+  $self->_set_key_bindings($win);
   
-  ## See if option set
-  if ($self->cancel_on_escape)
-  {
-    $win->bind(qq{<Key-Escape>} => sub {$result = 0;});
-  }
   ## Calculate the geometry
   $self->_calc_geometry($win);
 
@@ -757,11 +751,18 @@ sub show
   ## Hide the window
   $win->withdraw();
   
+  ## Clear all errors until form data is validated again
+  $self->clear_errors;
+  
   if ($result)
   {
     ## Build the result
     $result = {};
     $result->{$_->key} = $_->value foreach (@{$self->fields});
+    
+    ## Validate each field
+    $_->validate() foreach (@{$self->fields});
+    
   }
   else
   {
@@ -771,9 +772,6 @@ sub show
   ## Destroy the window and all its widgets
   $win->destroy();
   
-  ## Clear all errors until form data is validated again
-  $self->clear_errors;
-
   return($result);
 }
 
@@ -842,6 +840,116 @@ sub _calc_geometry
   
   return;
 }
+
+##----------------------------------------------------------------------------
+##     @fn _set_key_bindings($win)
+##  @brief Set key bindings for the given window
+##  @param $win - Window to use for binding keyboard events
+## @return NONE
+##   @note 
+##----------------------------------------------------------------------------
+sub _set_key_bindings
+{
+  my $self = shift;
+  my $win  = shift;
+  
+  ## Now add the "hot key"
+  my $button_text = $self->button_label;
+  my $underline   = index($button_text, qq{&});
+  if ($underline >= 0)
+  {
+    my $keycap = lc(substr($button_text, $underline, 1));
+    
+    $win->bind(qq{<Alt-Key-$keycap>} => sub {${$self->_watch_variable} = 1;});
+  }
+  
+  ## See if option set
+  if ($self->submit_on_enter)
+  {
+    $win->bind(qq{<Key-Return>} => sub {${$self->_watch_variable} = 1;});
+  }
+  
+  ## See if option set
+  if ($self->cancel_on_escape)
+  {
+    $win->bind(qq{<Key-Escape>} => sub {${$self->_watch_variable} = 0;});
+  }
+  
+  return;
+}
+
+##----------------------------------------------------------------------------
+##     @fn _set_message($win)
+##  @brief Set the message at the top of the form's window
+##  @param $win - Window object
+## @return NONE
+##   @note 
+##----------------------------------------------------------------------------
+sub _set_message
+{
+  my $self = shift;
+  my $win  = shift;
+  
+  ## See if we have a message
+  if ($self->message)
+  {
+    ## To keep the message from making the dialog box too
+    ## large, we will look at the current window width and
+    ## wrap the message accordingly
+    
+    ## Allow gemoetry manager to calculate all widgets
+    $win->update;
+    
+    ## Determine number of rows and columns in the grid 
+    my ($columns, $rows) = $win->gridSize();
+    
+    ## Use the dialog's minimum width as the starting point
+    my $max_x = $self->min_width;
+    
+    ## Iterate through all rows and columns
+    my $row = 0;
+    while ($row < $rows)
+    {
+      my $col = 0;
+      while ($col < $columns)
+      {
+        ## Get the bounding box of the widget
+        my ($x, $y, $width, $height) = $win->gridBbox($col, $row);
+        ## Get the max x of the widget
+        $x += $width;
+        ## See if this is larger than our current max x
+        $max_x = $x if ($x > $max_x);
+        
+        ## Increment the colums
+        $col++;
+      }
+      ## Increment the rows
+      $row++;
+    }
+    
+    ## Create a label widget
+    $win->Label(
+      -wraplength => $max_x,
+      -text       => $self->message,
+      -justify    => qq{left},
+      -font       => $self->message_font,
+    )
+    ->grid(
+      -row        => 0,
+      -rowspan    => 1,
+      -column     => 0,
+      -columnspan => 2,
+      -sticky     => qq{},
+    );
+    
+    ## Use an empty frame as a spacer 
+    $win->Frame(-height => 5)->grid(-row => 1);
+  }
+  
+  return;
+}
+
+
 
 ##****************************************************************************
 ##****************************************************************************
@@ -934,7 +1042,9 @@ sub initialize
   }
 
   $self->_import_hash($param);
-  return;
+  
+  ## Return object to allow chaining
+  return $self;
 }
 
 ##----------------------------------------------------------------------------
