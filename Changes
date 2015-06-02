@@ -1,4 +1,9 @@
 {{$NEXT}}
 
+1.0     2015-06-02
+        * Added support for a validation function for each field
+        * Added support for form validation by invoking each field's 
+          validation function
+        
 0.8     2015-05-04
         * Initial release
