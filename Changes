@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+1.1     2015-06-03
         * The set_field_data() now will silently return if a parameter is
           not provided.
         * For the Entry field, added trim_leading and trim_trailing attributes
