@@ -14,7 +14,7 @@ use with Tk
 
 =head1 VERSION
 
-Version 1.0
+Version 1.1
 
 =head1 SYNOPSIS
 
@@ -71,7 +71,7 @@ use JSON;
 use Try::Tiny;
 
 ## Version string
-our $VERSION = qq{1.0};
+our $VERSION = qq{1.1};
 
 Readonly::Scalar our $ENTRY       => qq{Entry};
 Readonly::Scalar our $CHECKBOX    => qq{Checkbox};
@@ -1115,7 +1115,11 @@ sub set_field_data
   my $self = shift;
   my $hash = shift;
   
-  confess(qq{Expacted a HASH reference!}) unless (ref($hash) eq qq{HASH});
+  ## Silently return if we did not receive a parameter
+  return if (!defined($hash));
+  
+  ## Bail out if the parameter is NOT a hash reference
+  confess(qq{Expected a HASH reference!}) unless (ref($hash) eq qq{HASH});
   
   foreach my $key (keys(%{$hash}))
   {
