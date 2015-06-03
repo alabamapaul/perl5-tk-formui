@@ -33,8 +33,6 @@ use Readonly;
 #use Tk::Checkbutton;
 
 ##--------------------------------------------------------
-Readonly::Scalar my $SVN_BUILD => sprintf("%d", q$Revision: 28 $ =~ /(\d+)/gx);
-
 our $VERSION = qq{0.1};
 
 ## The role for all Fields

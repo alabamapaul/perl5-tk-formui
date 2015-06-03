@@ -33,7 +33,6 @@ use Readonly;
 use Tk::BrowseEntry;
 
 ##--------------------------------------------------------
-Readonly::Scalar my $SVN_BUILD => sprintf("%d", q$Revision: 28 $ =~ /(\d+)/gx);
 
 our $VERSION = qq{0.1};
 
