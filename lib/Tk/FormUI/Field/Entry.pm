@@ -15,7 +15,7 @@ by Tk::FormUI and not directly by the user;
 
 =head1 VERSION
 
-Version 0.1
+Version 0.2
 
 =head1 SYNOPSIS
 
@@ -34,7 +34,7 @@ use Readonly;
 ##--------------------------------------------------------
 Readonly::Scalar my $SVN_BUILD => sprintf("%d", q$Revision: 28 $ =~ /(\d+)/gx);
 
-our $VERSION = qq{0.1};
+our $VERSION = qq{0.2};
 
 ## The role for all Fields
 with (qq{Tk::FormUI::Field});
@@ -46,6 +46,46 @@ with (qq{Tk::FormUI::Field});
 =head1 ATTRIBUTES
 
 =cut
+
+##****************************************************************************
+##****************************************************************************
+
+=over 2
+
+=item B<trim_leading>
+
+  If true, trim leading whitespace characters before returning the value
+  DEFAULT: 1
+
+=back
+
+=cut
+
+##----------------------------------------------------------------------------
+has trim_leading => (
+  is => qq{rw},
+  default => 1,
+);
+
+##****************************************************************************
+##****************************************************************************
+
+=over 2
+
+=item B<trim_trailing>
+
+  If true, trim trailing whitespace characters before returning the value
+  DEFAULT: 1
+
+=back
+
+=cut
+
+##----------------------------------------------------------------------------
+has trim_trailing => (
+  is => qq{rw},
+  default => 1,
+);
 
 ##****************************************************************************
 ## Object Methods
@@ -82,8 +122,15 @@ NONE
 sub value
 {
   my $self = shift;
+  my $data = $self->widget->get;
   
-  return($self->widget->get);
+  ## See if we have any data
+  if (defined($data))
+  {
+    $data =~ s/^\s+//g if ($self->trim_leading);  ## Remove leading spaces
+    $data =~ s/\s+$//g if ($self->trim_trailing); ## Remove trailing spaces
+  }
+  return($data);
 }
 
 ##****************************************************************************
