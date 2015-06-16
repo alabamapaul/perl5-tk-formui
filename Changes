@@ -1,5 +1,6 @@
 {{$NEXT}}
-
+        * Now sets focus to the first field
+        
 1.1     2015-06-03
         * The set_field_data() now will silently return if a parameter is
           not provided.

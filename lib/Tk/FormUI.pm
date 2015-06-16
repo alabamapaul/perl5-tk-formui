@@ -71,7 +71,7 @@ use JSON;
 use Try::Tiny;
 
 ## Version string
-our $VERSION = qq{1.1};
+our $VERSION = qq{1.02};
 
 Readonly::Scalar our $ENTRY       => qq{Entry};
 Readonly::Scalar our $CHECKBOX    => qq{Checkbox};
@@ -627,6 +627,7 @@ sub show_once
     $grid_row = 2;
   }
 
+  my $first_field;
   ## Now add the fields
   foreach my $field (@{$self->fields})
   {
@@ -689,6 +690,12 @@ sub show_once
       
       ## Increment the row index
       $grid_row++;
+      
+      ## See if this is our first non-readonly field
+      if (!$first_field && !$field->readonly)
+      {
+        $first_field = $field;
+      }
     }
   }
   
@@ -744,7 +751,22 @@ sub show_once
       $win->after(1500, sub {$result = $test;});
     }
   }
-  
+
+  ## See if we have a first field specified
+  if ($first_field)
+  {
+    if ($first_field->is_type($ENTRY))
+    {
+      ## If this is an entry field, select the entire string
+      ## and place the cursor at the end of the string
+      $first_field->widget->selectionRange(0, 'end');
+      $first_field->widget->icursor('end');
+    }
+    
+    ## Set the focus to the field
+    $first_field->widget->focus();
+
+  }
   ## Wait for variable to change
   $win->waitVariable(\$result);
 
