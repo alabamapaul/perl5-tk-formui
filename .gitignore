@@ -7,3 +7,4 @@
 
 ## Dzil artifacts
 .build
+*.tmp
