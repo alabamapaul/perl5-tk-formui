@@ -15,7 +15,7 @@ by Tk::FormUI and not directly by the user;
 
 =head1 VERSION
 
-Version 0.1
+Version 0.2
 
 =head1 SYNOPSIS
 
@@ -33,7 +33,7 @@ use Readonly;
 
 ##--------------------------------------------------------
 
-our $VERSION = qq{0.1};
+our $VERSION = qq{0.2};
 
 ## The role for all Fields
 with qq{Tk::FormUI::Field}, qq{Tk::FormUI::Choices};
@@ -43,6 +43,8 @@ with qq{Tk::FormUI::Field}, qq{Tk::FormUI::Choices};
 ##****************************************************************************
 
 =head1 ATTRIBUTES
+
+No additional attributes.
 
 =cut
 

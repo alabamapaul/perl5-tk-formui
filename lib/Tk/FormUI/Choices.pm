@@ -14,7 +14,7 @@ Tk::FormUI::Choices - A role common to all form fields with choices
 
 =head1 VERSION
 
-Version 0.1
+Version 0.2
 
 =head1 SYNOPSIS
 
@@ -31,7 +31,7 @@ use Readonly;
 use Carp qw(confess);
 
 ## Version string
-our $VERSION = qq{0.1};
+our $VERSION = qq{0.2};
 
 
 ##****************************************************************************
@@ -48,8 +48,6 @@ our $VERSION = qq{0.1};
 =head2 choices
 
 =over 2
-
-=item B<Description>
 
 Array of hash references representing the possible choices.
 The hash should have the following keys defined:
@@ -73,13 +71,9 @@ has choices => (
 
 =over 2
 
-=item B<Description>
-
 The maximum number of choices displayed per line
 
-=item B<Default>
-
-3
+DEFAULT: 3
 
 =back
 

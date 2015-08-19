@@ -14,7 +14,7 @@ use with Tk
 
 =head1 VERSION
 
-Version 1.1
+Version 1.03
 
 =head1 SYNOPSIS
 
@@ -71,18 +71,9 @@ use JSON;
 use Try::Tiny;
 
 ## Version string
-our $VERSION = qq{1.02};
+our $VERSION = qq{1.03};
 
-Readonly::Scalar our $ENTRY       => qq{Entry};
-Readonly::Scalar our $CHECKBOX    => qq{Checkbox};
-Readonly::Scalar our $RADIOBUTTON => qq{RadioButton};
-Readonly::Scalar our $COMBOBOX    => qq{Combobox};
 Readonly::Scalar our $READONLY    => 1;
-
-Readonly::Array my @KNOWN_FIELD_TYPES => (
-  $ENTRY, $CHECKBOX, $RADIOBUTTON, $COMBOBOX
-);
-  
 
 ## Used when importing a form, these are "simple" non-array attributes
 Readonly::Array my @SIMPLE_ATTRIBUTES => (
@@ -98,32 +89,84 @@ Readonly::Array my @SIMPLE_ATTRIBUTES => (
 The Tk::FormUI recognizes the following values for the "type" key when
 adding or defing a field.
 
+=cut
+
+##****************************************************************************
+##****************************************************************************
+
+
+=head2 Entry
 
 =over 2
 
-=item 'Entry'
+A Tk::Entry widget
 
-  A Tk::Entry widget
-  CONSTANT: $Tk::FormUI::ENTRY
+CONSTANT: $Tk::FormUI::ENTRY
 
-=item 'Checkbox'
+=back 
 
-  A group of Tk::CheckButton widgets that correspond to the choices
-  CONSTANT: $Tk::FormUI::CHECKBOX
+=cut
 
-=item 'RadioButton'
+##----------------------------------------------------------------------------
+Readonly::Scalar our $ENTRY => qq{Entry};
 
-  A group of Tk::RadioButton widgets that correspond to the choices
-  CONSTANT: $Tk::FormUI::RADIOBUTTON
+##****************************************************************************
+##****************************************************************************
 
-=item 'Combobox'
+=head2 Checkbox
 
-  A Tk::BrowserEntry widget with a drop-down list that correspond to the choices
-  CONSTANT: $Tk::FormUI::COMBOBOX
+=over 2
+
+A group of Tk::CheckButton widgets that correspond to the choices
+
+CONSTANT: $Tk::FormUI::CHECKBOX
 
 =back
 
 =cut
+
+##----------------------------------------------------------------------------
+Readonly::Scalar our $CHECKBOX => qq{Checkbox};
+
+##****************************************************************************
+##****************************************************************************
+
+=head2 RadioButton
+
+=over 2
+
+A group of Tk::RadioButton widgets that correspond to the choices
+
+CONSTANT: $Tk::FormUI::RADIOBUTTON
+
+=back
+
+=cut
+
+##----------------------------------------------------------------------------
+Readonly::Scalar our $RADIOBUTTON => qq{RadioButton};
+
+##****************************************************************************
+##****************************************************************************
+
+=head2 'Combobox'
+
+=over 2
+
+A Tk::BrowserEntry widget with a drop-down list that correspond to the choices
+
+CONSTANT: $Tk::FormUI::COMBOBOX
+
+=back
+
+=cut
+
+##----------------------------------------------------------------------------
+Readonly::Scalar our $COMBOBOX => qq{Combobox};
+
+Readonly::Array my @KNOWN_FIELD_TYPES => (
+  $ENTRY, $CHECKBOX, $RADIOBUTTON, $COMBOBOX
+);
 
 ##****************************************************************************
 ## Object attribute
@@ -136,12 +179,13 @@ adding or defing a field.
 ##****************************************************************************
 ##****************************************************************************
 
+=head2 title
+
 =over 2
 
-=item B<title>
+Title of the form.
 
-  Title of the form
-  DEFAULT: 'Form'
+DEFAULT: 'Form'
 
 =back
 
@@ -156,12 +200,13 @@ has title => (
 ##****************************************************************************
 ##****************************************************************************
 
+=head2 B<message>
+
 =over 2
 
-=item B<message>
+Message to display at the top of the form.
 
-  Message to display at the top of the form.
-  DEFAULT: ''
+DEFAULT: ''
 
 =back
 
@@ -176,12 +221,13 @@ has message => (
 ##****************************************************************************
 ##****************************************************************************
 
+=head2 message_font
+
 =over 2
 
-=item B<message_font>
+Font to use for the form's message
 
-  Font to use for the form's message
-  DEFAULT: 'times 12 bold'
+DEFAULT: 'times 12 bold'
 
 =back
 
@@ -196,11 +242,11 @@ has message_font => (
 ##****************************************************************************
 ##****************************************************************************
 
+=head2 fields
+
 =over 2
 
-=item B<fields>
-
-  The fields contained in this form
+The fields contained in this form.
 
 =back
 
@@ -214,15 +260,17 @@ has fields => (
 ##****************************************************************************
 ##****************************************************************************
 
+=head2 button_label
+
 =over 2
 
-=item B<button_label>
+The text to appear on the button at the bottom of the form.
 
-  The text to appear on the button at the bottom of the form.
-  You may place the ampersand before the character you want to use as
-  a "hot key" indicating holding the Alt key and the specified character
-  will do the same thing as pressing the button.
-  DEAULT: '&OK'
+You may place the ampersand before the character you want to use as
+a "hot key" indicating holding the Alt key and the specified character
+will do the same thing as pressing the button.
+
+DEAULT: '&OK'
 
 =back
 
@@ -236,12 +284,13 @@ has button_label => (
 
 ##****************************************************************************
 
+=head2 button_font
+
 =over 2
 
-=item B<button_font>
+Font to use for the form's button.
 
-  Font to use for the form's button
-  DEFAULT: 'times 10'
+DEFAULT: 'times 10'
 
 =back
 
@@ -255,12 +304,13 @@ has button_font => (
 
 ##****************************************************************************
 
+=head2 min_width
+
 =over 2
 
-=item B<min_width>
+Minimum width of the form window.
 
-  Minimum width of the form window
-  DEFAULT: 300
+DEFAULT: 300
 
 =back
 
@@ -274,12 +324,13 @@ has min_width => (
 
 ##****************************************************************************
 
+=head2 min_height
+
 =over 2
 
-=item B<min_height>
+Minimum height of the form window.
 
-  Minimum height of the form window
-  DEFAULT: 80
+DEFAULT: 80
 
 =back
 
@@ -293,13 +344,14 @@ has min_height => (
 
 ##****************************************************************************
 
+=head2 submit_on_enter
+
 =over 2
 
-=item B<submit_on_enter>
+Boolean value indicating if pressing the Enter key should simulate clicking
+the button to submit the form.
 
-  Boolean value indicating if pressing the Enter key should simulate clicking
-  the button to submit the form.
-  DEFAULT: 1
+DEFAULT: 1
 
 =back
 
@@ -313,13 +365,14 @@ has submit_on_enter => (
 
 ##****************************************************************************
 
+=head2 cancel_on_escape
+
 =over 2
 
-=item B<cancel_on_escape>
+Boolean value indicating if pressing the Escape key should simulate closing
+the window and canceling the form.
 
-  Boolean value indicating if pressing the Escape key should simulate closing
-  the window and canceling the form.
-  DEFAULT: 1
+DEFAULT: 1
 
 =back
 
@@ -334,12 +387,13 @@ has cancel_on_escape => (
 ##****************************************************************************
 ##****************************************************************************
 
+=head2 error_font
+
 =over 2
 
-=item B<error_font>
+Font to use for the form's error messages.
 
-  Font to use for the form's error messages
-  DEFAULT: 'times 12 bold'
+DEFAULT: 'times 12 bold'
 
 =back
 
@@ -354,12 +408,13 @@ has error_font => (
 ##****************************************************************************
 ##****************************************************************************
 
+=head2 error_marker
+
 =over 2
 
-=item B<error_marker>
+String used to indicate an error
 
-  String used to indicate an error
-  DEFAULT: '!'
+DEFAULT: '!'
 
 =back
 
@@ -374,12 +429,13 @@ has error_marker => (
 ##****************************************************************************
 ##****************************************************************************
 
+=head2 error_font_color
+
 =over 2
 
-=item B<error_font_color>
+Font color to use when displaying error message and error marker
 
-  Font color to use when displaying error message and error marker
-  DEFAULT: 'red'
+DEFAULT: 'red'
 
 =back
 
@@ -436,7 +492,7 @@ sub BUILD
 
 =item B<Description>
 
-Add a field to the form
+Add a field to the form.
 
 =item B<Parameters>
 
@@ -451,8 +507,8 @@ A list of key / value pairs should be provide
              values for the field.
              REQUIRED for Checkbox, RadioButton, and Combobox
              Each hash must have the following key/value pairs
-              label - String to be displayed
-              value - Value to return if selected
+                label - String to be displayed
+                value - Value to return if selected
 
 =item B<Return>
 
@@ -513,7 +569,8 @@ sub add_field ## no critic (RequireArgUnpacking,ProhibitUnusedPrivateSubroutines
 =item B<Description>
 
 Show the form as a child of the given parent, or as a new MainWindow if
-a parent is not specified;
+a parent is not specified.
+
 The function will return if the users cancels the form or submits a 
 form with no errors.
 
@@ -573,6 +630,7 @@ sub show
 
 Show the form as a child of the given parent, or as a new MainWindow if
 a parent is not specified.
+
 Once the user submits or cancels the form, the function will return.
 
 =item B<Parameters>
@@ -986,7 +1044,7 @@ initialize the form from a HASH reference, JSON string, or JSON file.
 In all cases, the hash should have the following format
 
   {
-    title
+    title  => 'My Form',
     fields => [
       {
         type  => 'Entry',
@@ -1009,6 +1067,7 @@ In all cases, the hash should have the following format
         ],
       }
     ]
+  }
 
 =item B<Parameters>
 
@@ -1121,7 +1180,7 @@ values
 =item B<Parameters>
 
 $hash - Hash reference containing key /values whose keys correspnd to the
-        various field keys
+various field keys
 
 =item B<Return>
 
@@ -1248,6 +1307,7 @@ Set the error for the field associated with the given key
 =item B<Parameters>
 
 $key - The key associated with the desired field
+
 $error - Error message for the given field
 
 =item B<Return>

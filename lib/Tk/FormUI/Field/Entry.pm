@@ -15,7 +15,7 @@ by Tk::FormUI and not directly by the user;
 
 =head1 VERSION
 
-Version 0.2
+Version 0.3
 
 =head1 SYNOPSIS
 
@@ -33,7 +33,7 @@ use Readonly;
 
 ##--------------------------------------------------------
 
-our $VERSION = qq{0.2};
+our $VERSION = qq{0.3};
 
 ## The role for all Fields
 with (qq{Tk::FormUI::Field});
@@ -49,12 +49,13 @@ with (qq{Tk::FormUI::Field});
 ##****************************************************************************
 ##****************************************************************************
 
+=head2 trim_leading
+
 =over 2
 
-=item B<trim_leading>
+If true, trim leading whitespace characters before returning the value
 
-  If true, trim leading whitespace characters before returning the value
-  DEFAULT: 1
+DEFAULT: 1
 
 =back
 
@@ -69,12 +70,13 @@ has trim_leading => (
 ##****************************************************************************
 ##****************************************************************************
 
+=head2 trim_trailing
+
 =over 2
 
-=item B<trim_trailing>
+If true, trim trailing whitespace characters before returning the value
 
-  If true, trim trailing whitespace characters before returning the value
-  DEFAULT: 1
+DEFAULT: 1
 
 =back
 
