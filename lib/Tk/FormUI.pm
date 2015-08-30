@@ -938,7 +938,7 @@ sub _set_key_bindings
   my $underline   = index($button_text, qq{&});
   if ($underline >= 0)
   {
-    my $keycap = lc(substr($button_text, $underline, 1));
+    my $keycap = lc(substr($button_text, $underline + 1, 1));
     
     $win->bind(qq{<Alt-Key-$keycap>} => sub {${$self->_watch_variable} = 1;});
   }
