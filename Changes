@@ -1,5 +1,7 @@
 {{$NEXT}}
-
+		* Corrected bug with release-kwalitee.t test failing if
+		  Test::Kwalitee was not installed
+		* Corrected bug with key bindings
 1.03    2015-08-19
         * Minor corrections to POD
 
