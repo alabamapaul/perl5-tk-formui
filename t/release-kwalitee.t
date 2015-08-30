@@ -26,7 +26,7 @@ BEGIN {
 }
 
 ## no critic (ProhibitStringyEval, RequireCheckingReturnValueOfEval)
-eval q(Test::Kwalitee 1.21 'kwalitee_ok');
+eval q(use Test::Kwalitee 1.21 'kwalitee_ok');
 plan skip_all => q(Test::Kwalitee required for kwalitee testing) if $@;
 
 kwalitee_ok();
