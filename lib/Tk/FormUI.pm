@@ -14,7 +14,7 @@ use with Tk
 
 =head1 VERSION
 
-Version 1.03
+Version 1.04
 
 =head1 SYNOPSIS
 
@@ -71,7 +71,7 @@ use JSON;
 use Try::Tiny;
 
 ## Version string
-our $VERSION = qq{1.03};
+our $VERSION = qq{1.04};
 
 Readonly::Scalar our $READONLY    => 1;
 
