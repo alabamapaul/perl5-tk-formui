@@ -18,7 +18,7 @@ use lib File::Spec->catdir(File::Spec->splitdir(dirname(__FILE__)), qq{lib});
 ## Add script directory/../lib
 use lib File::Spec->catdir(File::Spec->splitdir(dirname(__FILE__)), qq{..}, qq{lib});
 use Readonly;
-use Tk::FormUI 1.0;
+use Tk::FormUI 1.04;
 use Data::Dumper;
 
 ## List reference for choices
@@ -96,6 +96,19 @@ Readonly::Scalar my $SURVEY_FORM => {
       key   => qq{continent_visited},
       max_per_line => 2,    ## At most, 2 choices per line
       choices => $CONTINENT_CHOICES,
+    },
+    {
+      type  => $Tk::FormUI::DIRECTORY,
+      width => 40,
+      label => qq{Pictures},
+      key   => qq{pictures},
+      validation =>
+        sub
+        {
+          my $field = shift;
+          return if (length($field->value));
+          return(qq{The name field cannot be empty!});
+        },
     },
   ],
 };

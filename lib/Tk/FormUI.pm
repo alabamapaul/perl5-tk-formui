@@ -47,7 +47,7 @@ Version 1.04
       },
     ],
   );
-
+  
   ## Display the form and capture the data returned
   my $data = $form->show;
 
@@ -66,6 +66,7 @@ use Tk::FormUI::Field::Entry;
 use Tk::FormUI::Field::Radiobutton;
 use Tk::FormUI::Field::Checkbox;
 use Tk::FormUI::Field::Combobox;
+use Tk::FormUI::Field::Directory;
 use Data::Dumper;
 use JSON;
 use Try::Tiny;
@@ -149,7 +150,7 @@ Readonly::Scalar our $RADIOBUTTON => qq{RadioButton};
 ##****************************************************************************
 ##****************************************************************************
 
-=head2 'Combobox'
+=head2 Combobox
 
 =over 2
 
@@ -164,8 +165,27 @@ CONSTANT: $Tk::FormUI::COMBOBOX
 ##----------------------------------------------------------------------------
 Readonly::Scalar our $COMBOBOX => qq{Combobox};
 
+##****************************************************************************
+##****************************************************************************
+
+
+=head2 Directory
+
+=over 2
+
+A Tk::Entry widget with a button that will open a Tk::chooseDirectory window
+
+CONSTANT: $Tk::FormUI::DIRECTORY
+
+=back 
+
+=cut
+
+##----------------------------------------------------------------------------
+Readonly::Scalar our $DIRECTORY => qq{Directory};
+
 Readonly::Array my @KNOWN_FIELD_TYPES => (
-  $ENTRY, $CHECKBOX, $RADIOBUTTON, $COMBOBOX
+  $ENTRY, $CHECKBOX, $RADIOBUTTON, $COMBOBOX, $DIRECTORY,
 );
 
 ##****************************************************************************

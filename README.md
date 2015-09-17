@@ -19,4 +19,5 @@ of how to use the Tk::FormUI module.
 - [x] Add attribute to control automatic data validation, but default to 1 / TRUE
 - [x] For Entry fields add ability to strip leading and trailing whitespace
 - [x] Add attribute to control automatic stripping of whitespace with default of 1/TRUE
+- [ ] Add ability to allow field validation code access to other fields values 
 
