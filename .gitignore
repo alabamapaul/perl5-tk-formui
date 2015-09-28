@@ -8,3 +8,6 @@
 ## Dzil artifacts
 .build
 *.tmp
+
+## Ignore tarballs
+Tk-FormUI-*.tar.gz
