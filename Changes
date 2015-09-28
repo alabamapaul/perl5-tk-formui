@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+1.06    2015-09-28
+        * Updated tests to skip on systems that do not have an X Server
+          running. This should avoid the large number of failures reported
+          by CPAN Testers service.
+        
 1.05    2015-09-17
         * Added support for Tk::FormUI::DIRECTORY field
         
