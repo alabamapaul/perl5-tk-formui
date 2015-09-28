@@ -10,4 +10,4 @@
 *.tmp
 
 ## Ignore tarballs
-Tk-FormUI-*.tar.gz
+Tk-FormUI-*
