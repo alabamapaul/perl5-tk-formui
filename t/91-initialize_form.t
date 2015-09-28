@@ -8,6 +8,29 @@ use Test::More;
 use Tk::FormUI;
 use Readonly;
 
+## Make sure we have an X-Server before trying any Tk tests
+BEGIN
+{
+  ## From http://wiki.cpantesters.org/wiki/CPANAuthorNotes the 
+  ## "Why are you testing (and failing) my Tk-ish module without an X server?"
+  ## Tk now will load without an X Server, so we need to check that we
+  ## have a server before running any tests
+  require Test::More;
+  require Tk;
+  
+  my $mw = eval { MainWindow->new };
+  if ($mw)
+  {
+    ## MainWindow successfully created, 
+    ## Destory the window, and continue with tests
+    $mw->destroy;
+  }
+  else
+  {
+    ## Could not create MainWindow, skip the tests 
+    Test::More::plan(skip_all => 'No X Server detected');
+  }
+}
 
 Readonly::Scalar my $FORM_HASH => {
   title        => qq{Init Test},
