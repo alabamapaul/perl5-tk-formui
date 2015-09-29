@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+1.07    2015-09-29
+        * In Tk::FromUI::Field::Directory, removed "-mustexist" option so
+          the chooseDirectory() will work in linux.
+        * Updated tests to remove calls to diag() that are not needed
+
 1.06    2015-09-28
         * Updated tests to skip on systems that do not have an X Server
           running. This should avoid the large number of failures reported
