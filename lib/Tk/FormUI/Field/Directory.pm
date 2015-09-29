@@ -6,6 +6,10 @@ package Tk::FormUI::Field::Directory;
 ## NOTES:
 ##  * Before comitting this file to the repository, ensure Perl Critic can be
 ##    invoked at the HARSH [3] level with no errors
+## 2015-09-29 PDurden 
+##  * The -mustexist option causes the chooseDirectory dialog to not work 
+##    properly in Ubuntu 14.04. Filed RT issue 107416 about the issue
+## 
 ##****************************************************************************
 
 =head1 NAME
@@ -15,7 +19,7 @@ only be used by Tk::FormUI and not directly by the user;
 
 =head1 VERSION
 
-Version 1.04
+Version 1.05
 
 =head1 SYNOPSIS
 
@@ -33,7 +37,7 @@ use Readonly;
 
 ##--------------------------------------------------------
 
-our $VERSION = qq{1.04};
+our $VERSION = qq{1.05};
 
 ## The role for all Fields
 with (qq{Tk::FormUI::Field});
@@ -267,7 +271,7 @@ sub _browse
   my $selected = $self->widget->chooseDirectory(
     -initialdir => $initial_dir,
     -title      => $self->label,
-    -mustexist  => 0,
+##    -mustexist  => 0,
     );
   
   if ($selected)
