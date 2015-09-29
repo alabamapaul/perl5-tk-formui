@@ -19,7 +19,7 @@ if ($mw)
   ## MainWindow successfully created, 
   ## Destory the window, and continue with tests
   $mw->destroy;
-  diag(qq{Successfully created a Tk MainWindow, we must have an X-Server});
+  note(qq{Successfully created a Tk MainWindow, we must have an X-Server});
 }
 else
 {
@@ -77,7 +77,6 @@ ok(defined($field), 'Create radiobutton field');
 
 $form->title(qq{Test - Radio - H});
 $result = $form->show(undef, qq{TEST: 1});
-diag(explain($result));
 ##---------------------------------------
 
 $field = $form->add_field(
@@ -96,7 +95,6 @@ ok(defined($field), 'Create 2nd radiobutton field');
 
 $form->title(qq{Test - Radio - V});
 $result = $form->show(undef, qq{TEST: 1});
-diag(explain($result));
 ##---------------------------------------
 
 $field = $form->add_field(
@@ -115,7 +113,6 @@ ok(defined($field), 'Create checkbox field');
 ##---------------------------------------
 $form->title(qq{Test - Checkbox - H});
 $result = $form->show(undef, qq{TEST: 1});
-diag(explain($result));
 
 ##---------------------------------------
 
@@ -135,8 +132,6 @@ ok(defined($field), 'Create checkbox field');
 ##---------------------------------------
 $form->title(qq{Test - Checkbox - V});
 $result = $form->show(undef, qq{TEST: 1});
-diag(explain($result));
-
 
 
 done_testing();

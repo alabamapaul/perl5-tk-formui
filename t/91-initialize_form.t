@@ -19,7 +19,7 @@ if ($mw)
   ## MainWindow successfully created, 
   ## Destory the window, and continue with tests
   $mw->destroy;
-  diag(qq{Successfully created a Tk MainWindow, we must have an X-Server});
+  note(qq{Successfully created a Tk MainWindow, we must have an X-Server});
 }
 else
 {
@@ -97,7 +97,6 @@ $form->initialize($FORM_HASH);
 ## Test submitting the form
 $form->title(qq{Test - Submit});
 $result = $form->show(undef, qq{TEST: 1});
-diag(explain($result));
 
 ok(defined($result), 'Form submit detected');
 
@@ -105,7 +104,6 @@ ok(scalar(@{$FORM_HASH->{fields}}) == scalar(keys(%{$result})), 'Received the co
 
 $form->set_field_data($EXPECTED);
 $result = $form->show(undef, qq{TEST: 1});
-diag(explain($result));
 
 is_deeply($EXPECTED, $result, 'Received expected values');
 
